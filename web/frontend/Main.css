@@ -1,0 +1,85 @@
+
+.bundleGroup div {
+  width: 500px !important;
+  max-width: 100%;
+}
+.offer {
+  position: relative;
+  top: 0;
+  margin: 10px;
+}
+.bundleImage svg {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 25% !important;
+}
+.bundleImage img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  /* width: 25% !important; */
+}
+.makeNewOfferBtn {
+  display: block;
+  margin-left: auto;
+  margin-right: 0%;
+}
+.previewDiv {
+  width: 33%;
+  height: 450px;
+  max-width: 450px;
+  
+}
+.previewHead {
+  width: 100%;
+  background-color: azure;
+  height: 40px;
+  border: none;
+  border-bottom: 2px solid #10b981;
+  padding: 5px;
+
+}
+
+.headSection {
+  border-bottom: 2px solid #10b981;
+}
+
+.bodySection{
+    padding: 10px;
+}
+.products{
+    position: relative;
+    width: 66%;
+    height: fit-content;
+}
+.product{
+    position: relative;
+    border: 0;
+    /* border-bottom: 2px solid #10b981; */
+    border: 2px solid #cfcfcf;
+    padding: 15px;
+}
+.product::after{
+    content: '+';
+    position: absolute;
+    right: 50%;
+    font-size: 25px;
+    background-color: #fff;
+    border-radius: 45%;
+    border: 1px solid #10b981;
+    color: #10b981;
+    padding: 1px;
+    font-weight: 800;
+    margin: 5px 0 0 0;
+    z-index: 999;
+}
+.product .productDivBtn{
+position: absolute;
+right: 2%;
+font-size: 20px;
+}
+.add_discount_box{
+  display: flex;
+  gap: 2px;
+}
