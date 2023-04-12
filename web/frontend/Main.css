@@ -72,7 +72,7 @@
     padding: 1px;
     font-weight: 800;
     margin: 5px 0 0 0;
-    z-index: 999;
+    z-index: 1;
 }
 .product .productDivBtn{
 position: absolute;
@@ -82,4 +82,7 @@ font-size: 20px;
 .add_discount_box{
   display: flex;
   gap: 2px;
+}
+.css-1nmdiq5-menu{
+z-index: 5 !important;
 }

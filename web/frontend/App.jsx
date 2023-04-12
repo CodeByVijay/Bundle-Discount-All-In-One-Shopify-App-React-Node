@@ -9,6 +9,7 @@ import {
 } from "./components";
 import {ProductsApiContext} from "./components/context/ProductsApiContext";
 import Header from "./components/Header";
+import { BundleOfferContext } from "./components/context/BundleOfferContext";
 
 export default function App() {
   // Any .tsx or .jsx files in /pages will become a route
@@ -20,6 +21,7 @@ export default function App() {
     <PolarisProvider>
       <BrowserRouter>
         <AppBridgeProvider>
+          <BundleOfferContext>
           <QueryProvider>
           <ProductsApiContext>
             <NavigationMenu
@@ -29,6 +31,7 @@ export default function App() {
             <Routes pages={pages} />
             </ProductsApiContext>
           </QueryProvider>
+          </BundleOfferContext>
         </AppBridgeProvider>
       </BrowserRouter>
     </PolarisProvider>

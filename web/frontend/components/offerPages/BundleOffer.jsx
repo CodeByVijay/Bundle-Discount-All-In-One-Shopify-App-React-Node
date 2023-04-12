@@ -1,16 +1,21 @@
-import { React, useState,useContext } from "react";
+import { React, useState, useContext } from "react";
 import ProductSelection from "../ProductSelection";
 import { useNavigate } from "react-router-dom";
 import BundlePreview from "../previewComponents/BundlePreview";
 import FooterInOfferPage from "./FooterInOfferPage";
 import { ProductContext } from "../context/ProductsApiContext";
-
+import { countryList } from "../country.js";
+import Select, { components } from "react-select";
+import makeAnimated from "react-select/animated";
+import { BundleOfferStates } from "../context/BundleOfferContext";
+const animatedComponents = makeAnimated();
 
 const BundleOffer = () => {
   let navigate = useNavigate();
-  const {products} = useContext(ProductContext);
+  const { products } = useContext(ProductContext);
+  const { selectedProduct } = useContext(BundleOfferStates);
   const [allProducts, setAllProducts] = useState(products);
-
+  // const [country, setCountry] = useState(countryList)
 
   const [offername, setOfferName] = useState("");
   const [offerHeader, setOfferHeader] = useState("Buy 2 Get 1");
@@ -36,7 +41,7 @@ const BundleOffer = () => {
   const [roundDiscountChecked, setRoundDiscountChecked] = useState(false);
   const [roundDiscountCheckbox, setRoundDiscountCheckbox] = useState("");
 
-
+  const [selectedCountries, setSelectedCountries] = useState([]);
   const handleOfferName = (e) => {
     let offerName = e.target.value;
     setOfferName(offerName);
@@ -60,6 +65,7 @@ const BundleOffer = () => {
   const handleSpecificCountryCheckbox = (status) => {
     setSpecificCountryChecked(!specificCountryChecked);
     setSpecificCountryCheckbox(status);
+    setSelectedCountries([]);
   };
   const handleHideStoreFrontCheckbox = (status) => {
     setHideStoreFrontChecked(!hideStoreFrontChecked);
@@ -80,6 +86,15 @@ const BundleOffer = () => {
   const handleRoundDiscountCheckbox = (status) => {
     setRoundDiscountChecked(!roundDiscountChecked);
     setRoundDiscountCheckbox(status);
+  };
+  const countries = countryList.map((val, _) => {
+    return {
+      value: val.name,
+      label: val.name,
+    };
+  });
+  const handleCountry = (selected) => {
+    setSelectedCountries(selected);
   };
   return (
     <>
@@ -129,7 +144,7 @@ const BundleOffer = () => {
                 value={offerHeader}
               />
               <div className="productSelect mb-2">
-                <ProductSelection />
+                <ProductSelection productData={allProducts} />
               </div>
 
               <hr className="my-3" />
@@ -199,34 +214,25 @@ const BundleOffer = () => {
                 {discountStatus === "free_gift" && (
                   <>
                     <div className="free_gift_box my-2 ml-8">
-                      <div className="flex items-center mb-4 ml-5">
-                        <input
-                          id="product1-checkbox"
-                          type="checkbox"
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
-                          
-                        />
-                        <label
-                          htmlFor="product1-checkbox"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                        >
-                          Product 1
-                        </label>
-                      </div>
-
-                      <div className="flex items-center ml-5">
-                        <input
-                          id="product2-checkbox"
-                          type="checkbox"
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
-                        />
-                        <label
-                          htmlFor="product2-checkbox"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                        >
-                          Product 2
-                        </label>
-                      </div>
+                      {selectedProduct.map((val, index) => {
+                        console.log(val.selectedOption,"Val")
+                        {val.selectedOption !== undefined && 
+                         (
+                          <div key={index} className="flex items-center mb-4 ml-5">
+                            <input
+                              id="product1-checkbox"
+                              type="checkbox"
+                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
+                            />
+                            <label
+                              htmlFor="product1-checkbox"
+                              className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
+                              Product #{index+1}
+                            </label>
+                          </div>
+                        )}
+                      })}
                     </div>
                   </>
                 )}
@@ -329,25 +335,18 @@ const BundleOffer = () => {
                 </div>
                 {specificCountryChecked && (
                   <>
-                    <div className="relative max-w-sm ml-5 mb-4">
-                      <div className="absolute inset-y-0 left-3 flex items-center pl-1 pointer-events-none">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          class="bi bi-search"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                        </svg>
-                      </div>
-
-                      <input
-                        type="text"
-                        name=""
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 block w-2/3 p-2.5 pl-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-3"
-                        placeholder="Choose country"
+                    <div className="max-w-sm ml-5 mb-4">
+                      <Select
+                        closeMenuOnSelect={false}
+                        isMulti={true}
+                        searchable={true}
+                        options={countries}
+                        components={animatedComponents}
+                        menuPlacement="auto"
+                        onChange={handleCountry}
+                        getOptionLabel={(option) => option.label}
+                        formatOptionLabel={({ label }) => <div>{label}</div>}
+                        placeholder="Select Country"
                       />
                     </div>
                   </>
@@ -412,7 +411,6 @@ const BundleOffer = () => {
                           id="product1-checkbox"
                           type="checkbox"
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
-                          checked
                         />
                         <label
                           htmlFor="product1-checkbox"
@@ -577,13 +575,13 @@ const BundleOffer = () => {
               </label>
               <hr />
 
-              <BundlePreview data={offername}/>
+              <BundlePreview data={offername} />
             </div>
           </div>
         </div>
       </div>
 
-      <FooterInOfferPage page="Bundle_Offer"/>
+      <FooterInOfferPage page="Bundle_Offer" />
     </>
   );
 };

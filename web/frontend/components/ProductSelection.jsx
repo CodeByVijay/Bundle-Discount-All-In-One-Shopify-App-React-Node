@@ -1,79 +1,79 @@
-// import { Provider } from '@shopify/app-bridge-react';
-import { React, useEffect, useState } from "react";
-
+import { React, useContext, useState } from "react";
+import Select, { components } from "react-select";
+import makeAnimated from "react-select/animated";
+import { BundleOfferStates } from "./context/BundleOfferContext";
+const animatedComponents = makeAnimated();
 
 const ProductSelection = (props) => {
-  
-  const [count, setCount] = useState(1);
+  //  const [selectedOptions, setSelectedOptions] = useState([]);
+  const { setSelectedProducts } = useContext(BundleOfferStates);
+  const [items, setItems] = useState([
+    { id: Date.now(), value: "" },
+    { id: Date.now() + 1, value: "" },
+  ]);
+
   const handleAddNew = () => {
-    // console.log(props.title)
-    setCount(count + 1);
+    // if (items.length < 4) {
+    setItems([...items, { id: Date.now(), value: "" }]);
+    // }
+  };
+  // const handleAddNew = () => {
+  //   setItems([
+  //     { id: Date.now(), selectedOption: null },
+  //     { id: Date.now() + 1, selectedOption: null },
+  //     ...items,
+  //   ]);
+  // };
+
+  const handleDivRemove = (id) => {
+    setItems(items.filter((item) => item.id !== id));
   };
 
-  const handleDivRemove = (e) => {
-    if (count > 1) {
-      setCount(count - 1);
+  const Option = (props) => (
+    <components.Option {...props}>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <img
+          src={props.data.imageSrc}
+          alt={props.data.label}
+          style={{ width: 50, marginRight: 8 }}
+        />
+        <div>{props.data.label}</div>
+      </div>
+    </components.Option>
+  );
+
+  const product = props.productData.map((val, index) => {
+    let imageSrc = null;
+    if (val.image && val.image.src) {
+      imageSrc = val.image.src;
+    } else {
+      imageSrc =
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1200px-No-Image-Placeholder.svg.png";
     }
-  };
+    return {
+      value: val.id,
+      label: val.title,
+      imageSrc,
+    };
+  });
 
-  function Product(data) {
-  
-
-    
-    // const callProducts = async () => {
-    //     fetch(`/api/products?id=${lastId}`)
-    //     .then(res=>res.json())
-    //     .then(x=>{
-    //         console.log(x,"products ids")
-    //         const len = x.length-1
-    //         const id = x[len].id
-    //         const pro = products.concat(x.reverse())
-    //         productsState(pro)
-    //         lastIdState(id)
-    //     }).catch(err=>{})
-    // };
-
-    return (
-      <>
-      {/* <button type="button" onClick={callProducts}>Test</button> */}
-        <div className="product">
-          {data.count > 2 && (
-            <div class="productDivBtn">
-              <button
-                className="deleteButton text-gray-500"
-                onClick={(e) => handleDivRemove()}
-              >
-                <i class="fa fa-trash"></i>
-              </button>
-            </div>
-          )}
-          <label>Product {data.count}</label>
-          <div className="relative w-full my-4">
-            <div className="absolute inset-y-0 left-3 flex items-center pl-1 pointer-events-none">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-search"
-                viewBox="0 0 16 16"
-              >
-                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-              </svg>
-            </div>
-
-            <input
-              type="text"
-              name=""
-              
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pl-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-3"
-              placeholder="Choose Product"
-            />
-          </div>
-        </div>
-      </>
+  const handleProductValue = (id, selectedOption) => {
+    setItems(
+      items.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            selectedOption: selectedOption.value,
+          };
+        } else {
+          return item;
+        }
+      })
     );
-  }
+  };
+  setSelectedProducts(items)
+
+  console.log(items,"Selected Product");
 
   return (
     <>
@@ -82,19 +82,39 @@ const ProductSelection = (props) => {
         id="products"
       >
         <div className="productContainer" id="productContainer">
-          {[...Array(count)].map((_, index) => (
-            <>
-              {index === 0 ? (
-                <>
-                  <Product count={index + 1} />
-                  <Product count={index + 2} />
-                </>
-              ) : (
-                <>
-                  <Product count={2 + index} />
-                </>
+          {items.map((item, index) => (
+            <div key={item.id} className="product">
+              {index > 1 && (
+                <div class="productDivBtn">
+                  <button
+                    className="deleteButton text-gray-500"
+                    onClick={(e) => handleDivRemove(item.id)}
+                  >
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </div>
               )}
-            </>
+
+              <label>Product #{index + 1}</label>
+              <div className="w-full my-4">
+                <Select
+                  closeMenuOnSelect={true}
+                  isMulti={false}
+                  // value={item.selectedOption ? { value: item.selectedOption } : null}
+                  searchable={true}
+                  options={product}
+                  menuPlacement="auto"
+                  components={{ Option, animatedComponents }}
+                  onChange={(selectedOptions) =>{
+                    handleProductValue(item.id, selectedOptions)
+                  }
+                  }
+                  getOptionLabel={(option) => option.label}
+                  formatOptionLabel={({ label }) => <div>{label}</div>}
+                  placeholder="Select Product"
+                />
+              </div>
+            </div>
           ))}
         </div>
 
