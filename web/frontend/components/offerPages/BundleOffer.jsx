@@ -1,4 +1,4 @@
-import { React, useState, useContext } from "react";
+import { React, useState, useContext, useEffect } from "react";
 import ProductSelection from "../ProductSelection";
 import { useNavigate } from "react-router-dom";
 import BundlePreview from "../previewComponents/BundlePreview";
@@ -13,15 +13,23 @@ const animatedComponents = makeAnimated();
 const BundleOffer = () => {
   let navigate = useNavigate();
   const { products } = useContext(ProductContext);
-  const { selectedProduct } = useContext(BundleOfferStates);
+  const {
+    selectedProduct,
+    roundDiscount,
+    discountParam,
+    discountValue,
+    setDiscountValue,
+    discountType,
+    setDiscountType,
+  } = useContext(BundleOfferStates);
+
   const [allProducts, setAllProducts] = useState(products);
-  // const [country, setCountry] = useState(countryList)
+  const [selectedDiscountType, setSelectedDiscountType] = useState(discountParam[0]);
 
   const [offername, setOfferName] = useState("");
   const [offerHeader, setOfferHeader] = useState("Buy 2 Get 1");
   const [offerHeaderlength, setOfferHeaderLength] = useState();
   const [discountStatus, setDiscountStatus] = useState("add_discount");
-  const [discountVal, setDiscountVal] = useState("10");
 
   const [customerChecked, setCustomerChecked] = useState(false);
   const [customerOptionCheckbox, setCustomerOptionCheckbox] = useState("");
@@ -42,6 +50,8 @@ const BundleOffer = () => {
   const [roundDiscountCheckbox, setRoundDiscountCheckbox] = useState("");
 
   const [selectedCountries, setSelectedCountries] = useState([]);
+  const [roundDiscountVal, setRoundDiscountVal] = useState();
+
   const handleOfferName = (e) => {
     let offerName = e.target.value;
     setOfferName(offerName);
@@ -55,8 +65,12 @@ const BundleOffer = () => {
     setDiscountStatus(status);
   };
   const handleDiscountVal = (e) => {
-    setDiscountVal(e.target.value);
+    setDiscountValue(e.target.value);
   };
+  const handleDiscountType = (selected)=>{
+    setSelectedDiscountType(selected)
+    setDiscountType(selected.value);
+  }
 
   const handleCustomerOptionCheckbox = (status) => {
     setCustomerChecked(!customerChecked);
@@ -95,6 +109,9 @@ const BundleOffer = () => {
   });
   const handleCountry = (selected) => {
     setSelectedCountries(selected);
+  };
+  const handleRoundDiscount = (selected) => {
+    setRoundDiscountVal(selected);
   };
   return (
     <>
@@ -179,17 +196,20 @@ const BundleOffer = () => {
                       <input
                         type="text"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-[#3b82f6] focus:border-[#3b82f6] block w-14 p-2 pl-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#3b82f6] dark:focus:border-[#3b82f6] focus:border-none"
-                        value={discountVal}
+                        value={discountValue}
                         onChange={(e) => handleDiscountVal(e)}
                       />
-                      <select
-                        name=""
-                        id=""
-                        className="focus:border-none focus:outline-none rounded text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                      >
-                        <option value="">% Off</option>
-                        <option value="">Rs. Off</option>
-                      </select>
+                      <Select
+                      className="w-28"
+                        closeMenuOnSelect={true}
+                        options={discountParam}
+                        components={animatedComponents}
+                        value={selectedDiscountType}
+                        menuPlacement="auto"
+                        onChange={handleDiscountType}
+                        getOptionLabel={(option) => option.label}
+                        formatOptionLabel={({ label }) => <div>{label}</div>}
+                      />
                     </div>
                   </>
                 )}
@@ -214,25 +234,28 @@ const BundleOffer = () => {
                 {discountStatus === "free_gift" && (
                   <>
                     <div className="free_gift_box my-2 ml-8">
-                      {selectedProduct.map((val, index) => {
-                        console.log(val.selectedOption,"Val")
-                        {val.selectedOption !== undefined && 
-                         (
-                          <div key={index} className="flex items-center mb-4 ml-5">
-                            <input
-                              id="product1-checkbox"
-                              type="checkbox"
-                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
-                            />
-                            <label
-                              htmlFor="product1-checkbox"
-                              className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      {selectedProduct.map(
+                        (val, index) =>
+                          // console.log(val.selectedOption,"Val")
+                          val.selectedOption && (
+                            <div
+                              key={index}
+                              className="flex items-center mb-4 ml-5"
                             >
-                              Product #{index+1}
-                            </label>
-                          </div>
-                        )}
-                      })}
+                              <input
+                                id={`free-product${index + 1}-checkbox`}
+                                type="checkbox"
+                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
+                              />
+                              <label
+                                htmlFor={`free-product${index + 1}-checkbox`}
+                                className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                              >
+                                Product #{index + 1}
+                              </label>
+                            </div>
+                          )
+                      )}
                     </div>
                   </>
                 )}
@@ -406,33 +429,31 @@ const BundleOffer = () => {
                       <p className="text-gray-500 ml-5 mb-4">
                         Mark the product pages you want this offer to show in.
                       </p>
-                      <div className="flex items-center mb-4 ml-5">
-                        <input
-                          id="product1-checkbox"
-                          type="checkbox"
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
-                        />
-                        <label
-                          htmlFor="product1-checkbox"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                        >
-                          Product 1
-                        </label>
-                      </div>
 
-                      <div className="flex items-center ml-5">
-                        <input
-                          id="product2-checkbox"
-                          type="checkbox"
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
-                        />
-                        <label
-                          htmlFor="product2-checkbox"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 "
-                        >
-                          Product 2
-                        </label>
-                      </div>
+                      {selectedProduct.map(
+                        (val, index) =>
+                          // console.log(val.selectedOption,"Val")
+                          val.selectedOption && (
+                            <div
+                              key={index}
+                              className="flex items-center mb-4 ml-5"
+                            >
+                              <input
+                                id={`specific-product${index + 1}-checkbox`}
+                                type="checkbox"
+                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
+                              />
+                              <label
+                                htmlFor={`specific-product${
+                                  index + 1
+                                }-checkbox`}
+                                className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                              >
+                                Product #{index + 1}
+                              </label>
+                            </div>
+                          )
+                      )}
                     </div>
                   </>
                 )}
@@ -542,24 +563,23 @@ const BundleOffer = () => {
                 {roundDiscountChecked && (
                   <>
                     <div className="roundSelectBox ml-5">
-                      <select
-                        name=""
-                        id=""
-                        className="focus:border-none rounded bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 w-1/3 block pl-2 p-2.5"
-                      >
-                        <option value="">.00</option>
-                        <option value="">.49</option>
-                        <option value="">.50</option>
-                        <option value="">.95</option>
-                        <option value="">.99</option>
-                      </select>
+                      <Select
+                        closeMenuOnSelect={true}
+                        options={roundDiscount}
+                        components={animatedComponents}
+                        menuPlacement="auto"
+                        onChange={handleRoundDiscount}
+                        getOptionLabel={(option) => option.label}
+                        formatOptionLabel={({ label }) => <div>{label}</div>}
+                        placeholder="Select Round Discount"
+                      />
                     </div>
                   </>
                 )}
               </div>
             </div>
           </div>
-          <div className="col-span-1 fixed right-5 border-solid border-2 border-clay-500 previewDiv">
+          <div className="col-span-1 fixed right-5 mb-5 border-solid border-2 border-clay-500 previewDiv">
             <div className="previewHead">
               <h3 className="text-lg text-center text-bold">Preview</h3>
             </div>
@@ -575,7 +595,12 @@ const BundleOffer = () => {
               </label>
               <hr />
 
-              <BundlePreview data={offername} />
+              {selectedProduct.map(
+                (val, index) =>
+                  // console.log(val.selectedOption,"Val")
+                  index === 0 &&
+                  val.selectedProduct && <BundlePreview data={offername} />
+              )}
             </div>
           </div>
         </div>

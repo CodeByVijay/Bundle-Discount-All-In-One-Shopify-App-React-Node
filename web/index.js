@@ -39,13 +39,13 @@ app.use(express.json());
 app.get("/api/products", async (req, res) => {
   // console.log("running")
   try{
-    console.log(req.query.id)
+    // console.log(req.query.id)
     const id = req.query.id
   const countData = await shopify.api.rest.Product.all({
     session: res.locals.shopify.session,
     since_id:id,
     limit:250,
-    fields:'title,image,id'
+    fields:'title,image,id,variants'
   });
   res.status(200).send(countData);
   }catch(err){

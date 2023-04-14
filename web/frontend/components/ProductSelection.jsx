@@ -1,29 +1,29 @@
-import { React, useContext, useState } from "react";
+import { React, useContext, useState, useEffect } from "react";
 import Select, { components } from "react-select";
 import makeAnimated from "react-select/animated";
 import { BundleOfferStates } from "./context/BundleOfferContext";
 const animatedComponents = makeAnimated();
 
 const ProductSelection = (props) => {
-  //  const [selectedOptions, setSelectedOptions] = useState([]);
-  const { setSelectedProducts } = useContext(BundleOfferStates);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const { selectedProduct, setSelectedProducts } =
+    useContext(BundleOfferStates);
   const [items, setItems] = useState([
     { id: Date.now(), value: "" },
     { id: Date.now() + 1, value: "" },
   ]);
-
+  useEffect(() => {
+    setSelectedProducts([])
+  }, []);
+  const [allProducts, setAllProducts] = useState([]);
+  useEffect(() => {
+    setAllProducts(props.productData);
+  }, []);
   const handleAddNew = () => {
     // if (items.length < 4) {
     setItems([...items, { id: Date.now(), value: "" }]);
     // }
   };
-  // const handleAddNew = () => {
-  //   setItems([
-  //     { id: Date.now(), selectedOption: null },
-  //     { id: Date.now() + 1, selectedOption: null },
-  //     ...items,
-  //   ]);
-  // };
 
   const handleDivRemove = (id) => {
     setItems(items.filter((item) => item.id !== id));
@@ -42,7 +42,7 @@ const ProductSelection = (props) => {
     </components.Option>
   );
 
-  const product = props.productData.map((val, index) => {
+  const product = allProducts.map((val, index) => {
     let imageSrc = null;
     if (val.image && val.image.src) {
       imageSrc = val.image.src;
@@ -54,26 +54,41 @@ const ProductSelection = (props) => {
       value: val.id,
       label: val.title,
       imageSrc,
+      index:index
     };
   });
 
   const handleProductValue = (id, selectedOption) => {
-    setItems(
-      items.map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            selectedOption: selectedOption.value,
-          };
-        } else {
-          return item;
-        }
-      })
-    );
+    const data =   items.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          selectedProduct:allProducts[selectedOption.index],
+          selectedVariant:allProducts[selectedOption.index].variants[0],
+        };
+      } else {
+        return item;
+      }
+    })
+    // console.log(data)
+    setItems(data);
+    setSelectedProducts(data);
   };
-  setSelectedProducts(items)
 
-  console.log(items,"Selected Product");
+  // console.log(items, "Selected Product");
+  const handleSpecificVariant = (itemId) => {
+    const index = selectedItems.indexOf(itemId);
+    if (index > -1) {
+      // If the item is already selected, remove it from the array
+      setSelectedItems([
+        ...selectedItems.slice(0, index),
+        ...selectedItems.slice(index + 1),
+      ]);
+    } else {
+      // If the item is not already selected, add it to the array
+      setSelectedItems([...selectedItems, itemId]);
+    }
+  };
 
   return (
     <>
@@ -105,14 +120,57 @@ const ProductSelection = (props) => {
                   options={product}
                   menuPlacement="auto"
                   components={{ Option, animatedComponents }}
-                  onChange={(selectedOptions) =>{
-                    handleProductValue(item.id, selectedOptions)
-                  }
-                  }
+                  onChange={(selectedOptions) => {
+                    handleProductValue(item.id, selectedOptions);
+                  }}
                   getOptionLabel={(option) => option.label}
                   formatOptionLabel={({ label }) => <div>{label}</div>}
                   placeholder="Select Product"
                 />
+
+                {item.selectedProduct && (
+                  <>
+                    <div className="flex items-center mt-4 ml-3">
+                      <input
+                        id={item.id}
+                        type="checkbox"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
+                        onChange={() => handleSpecificVariant(item.id)}
+                        checked={selectedItems.includes(item.id)}
+                      />
+                      <label
+                        htmlFor={item.id}
+                        className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >
+                        Target specific variants
+                      </label>
+                    </div>
+
+                    {selectedItems.includes(item.id) && item.selectedProduct && (
+                      <>
+                        <div className="my-2">
+                        <select
+                          name=""
+                          id={`variant-select${item.id}`}
+                          className="focus:border-none rounded bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 w-1/3 block pl-2 p-2.5"
+                          style={{"width":"100%"}}
+                          // onChange={(e) => handleVariant(product.id, e)}
+                        >
+                          {allProducts
+                            .find(
+                              (product) => product.id === item.selectedProduct.id
+                            )
+                            .variants.map((variant) => (
+                              <option key={variant.id} value={variant.id}>
+                                {variant.title}
+                              </option>
+                            ))}
+                        </select>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           ))}

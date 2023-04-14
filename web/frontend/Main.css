@@ -27,9 +27,9 @@
 }
 .previewDiv {
   width: 33%;
-  height: 450px;
+  height: 400px;
   max-width: 450px;
-  
+  overflow-x: hidden;
 }
 .previewHead {
   width: 100%;
@@ -85,4 +85,15 @@ font-size: 20px;
 }
 .css-1nmdiq5-menu{
 z-index: 5 !important;
+}
+
+.itemBox{
+  border: 2px solid #9da1a6;
+}
+.totalBox{
+  border-top: 2px solid #9da1a6;
+}
+.previewBody{
+  /* overflow: hidden; */
+  overflow-x: scroll !important;
 }
