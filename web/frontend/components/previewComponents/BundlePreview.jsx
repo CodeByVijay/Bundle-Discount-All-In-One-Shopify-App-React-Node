@@ -7,6 +7,13 @@ const BundlePreview = (props) => {
     setSelectedProducts,
     discountValue,
     discountType,
+    discountStatus,
+    customerChecked,
+    customerOptionCheckbox,
+    customerOptionSelected,
+    setCustomerOptionSelected,
+    checkedFreeProduct,
+    setCheckedFreeProduct,
   } = useContext(BundleOfferStates);
 
   const handleVariant = (productId, e) => {
@@ -17,18 +24,29 @@ const BundlePreview = (props) => {
     selectedProduct[index].selectedVariant =
       selectedProduct[index].selectedProduct.variants[variantIndex];
     setSelectedProducts([...selectedProduct]);
+    setCustomerOptionSelected("");
   };
-  // const totalPrice = selectedProduct.reduce((acc, cur) => {
-  //   console.log(cur.selectedVariant.price,"acc,cur")
-  //   return Number(acc.selectedVariant.price).toFixed(2) + cur.selectedVariant && Number(cur.selectedVariant.price).toFixed(2), 0
-  // });
-  // console.log(totalPrice,"total Price")
+  const totalPrice = selectedProduct.reduce((acc, cur) => {
+    const price = cur.freeProduct!==true?cur.selectedVariant && Number(cur.selectedVariant.price):null;
+    const productTotal = price && price !== null ? price : 0.0;
+    cur.productTotal = Number(productTotal.toFixed(2));
+    return acc + productTotal;
+  }, 0).toFixed(2);
+
+  const totalPriceCross = selectedProduct.reduce((acc, cur) => {
+    const price = cur.selectedVariant && Number(cur.selectedVariant.price);
+    const productTotal = price && price !== null ? price : 0.0;
+    cur.productTotal = Number(productTotal.toFixed(2));
+    return acc + productTotal;
+  }, 0).toFixed(2);
+  
+  console.log(selectedProduct,"selected")
+  console.log(checkedFreeProduct,"checkedFreeProduct")
   return (
     <>
       <h1>{props.data}</h1>
       <div className="itemBox">
         {selectedProduct.map((val, index) => {
-          // console.log(val, "val");
           return (
             <>
               {val.selectedProduct && (
@@ -49,17 +67,41 @@ const BundlePreview = (props) => {
                         />
                       </div>
                       <div className="pname">{val.selectedProduct.title}</div>
+
                       <div className="priceTotal text-right">
-                        {discountType === 'percent' && (
+                        {val.selectedVariant && (
                           <strike>
-                          <span>
-                            Rs.{" "}
-                            {val.selectedVariant && Number(val.selectedVariant.price).toFixed(2)}
-                          </span>
-                        </strike>
+                            <span>
+                              Rs.{" "}
+                              {discountStatus === "add_discount" &&
+                              discountType === "percent"
+                                ? Number(val.selectedVariant.price).toFixed(2)
+                                : discountStatus === "add_discount" &&
+                                  discountType === "fixed"
+                                ? Number(val.selectedVariant.price).toFixed(2)
+                                : Number(
+                                    Number(val.selectedVariant.price) +
+                                      (Number(val.selectedVariant.price) * 10) /
+                                        100
+                                  ).toFixed(2)}
+                            </span>
+                          </strike>
                         )}
                         &nbsp;&nbsp;
-                        <span>Rs. {discountType === 'percent'?Number(val.selectedVariant.price-(val.selectedVariant.price*discountValue/100)).toFixed(2):Number(val.selectedVariant.price).toFixed(2)}</span>
+                        <span>
+                          Rs.{" "}
+                          { val.freeProduct && val.freeProductId=== val.selectedProduct.id ?'FREE':`${discountStatus === "add_discount" &&
+                          discountType === "percent"
+                            ? Number(
+                                val.selectedVariant.price -
+                                  (val.selectedVariant.price * discountValue) /
+                                    100
+                              ).toFixed(2)
+                            : discountStatus === "add_discount" &&
+                              discountType === "percent"
+                            ? Number(val.selectedVariant.price).toFixed(2)
+                            : Number(val.selectedVariant.price).toFixed(2)}`}
+                        </span>
                       </div>
                     </div>
 
@@ -76,6 +118,11 @@ const BundlePreview = (props) => {
                                 handleVariant(val.selectedProduct.id, e)
                               }
                             >
+                              {customerChecked && (
+                                <option key={`choose`} value="" selected>
+                                  Choose variant
+                                </option>
+                              )}
                               {val.selectedProduct.variants.map(
                                 (variant, vindex) => (
                                   <option key={vindex} value={vindex}>
@@ -95,16 +142,56 @@ const BundlePreview = (props) => {
           );
         })}
         <div className="totalBox px-5 py-2">
+          <div className="text-right">
+            <span>
+              <span className="color-[#10b981]">
+                {discountStatus === "add_discount" && discountType === "percent"
+                  ? `Save ${discountValue}%`
+                  : discountStatus === "add_discount" &&
+                    discountType === "fixed"
+                  ? `Save Rs.  ${discountValue}`
+                  : discountStatus === "free_gift"
+                  ? `FREE GIFT INCLUDED`
+                  : discountStatus === "no_discount"
+                  ? ""
+                  : ""}
+              </span>
+            </span>
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="textTotal">
               <p>Total : </p>
             </div>
             <div className="priceTotal text-right">
               <strike>
-                <span>Rs. 100.00</span>
+                <span>Rs. {discountStatus === "add_discount" &&
+                              discountType === "percent"
+                                ? Number(totalPriceCross).toFixed(2)
+                                : discountStatus === "add_discount" &&
+                                  discountType === "fixed"
+                                ? Number(totalPriceCross).toFixed(2)
+                                : Number(
+                                    Number(totalPriceCross) +
+                                      (Number(totalPriceCross) * 10) /
+                                        100
+                                  ).toFixed(2)}
+                </span>
               </strike>
               &nbsp;&nbsp;
-              <span>Rs. 90.00</span>
+              <span>
+                Rs.{" "}
+                {discountStatus === "add_discount" && discountType === "percent"
+                  ? Number(
+                      totalPrice - (totalPrice * discountValue) / 100
+                    ).toFixed(2)
+                  : discountStatus === "add_discount" &&
+                    discountType === "fixed"
+                  ? Number(
+                      Number(totalPrice).toFixed(2) -
+                        Number(discountValue).toFixed(2)
+                    ).toFixed(2)
+                  : Number(totalPrice).toFixed(2)}
+              </span>
             </div>
           </div>
         </div>

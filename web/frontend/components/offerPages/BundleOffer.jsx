@@ -15,24 +15,33 @@ const BundleOffer = () => {
   const { products } = useContext(ProductContext);
   const {
     selectedProduct,
+    setSelectedProducts,
     roundDiscount,
     discountParam,
     discountValue,
     setDiscountValue,
     discountType,
     setDiscountType,
+    discountStatus,
+    setDiscountStatus,
+    customerChecked,
+    setCustomerChecked,
+    customerOptionCheckbox,
+    setCustomerOptionCheckbox,
+    setCustomerOptionSelected,
+    checkedFreeProduct,
+    setCheckedFreeProduct,
   } = useContext(BundleOfferStates);
 
   const [allProducts, setAllProducts] = useState(products);
-  const [selectedDiscountType, setSelectedDiscountType] = useState(discountParam[0]);
+  const [selectedDiscountType, setSelectedDiscountType] = useState(
+    discountParam[0]
+  );
 
   const [offername, setOfferName] = useState("");
   const [offerHeader, setOfferHeader] = useState("Buy 2 Get 1");
   const [offerHeaderlength, setOfferHeaderLength] = useState();
-  const [discountStatus, setDiscountStatus] = useState("add_discount");
 
-  const [customerChecked, setCustomerChecked] = useState(false);
-  const [customerOptionCheckbox, setCustomerOptionCheckbox] = useState("");
   const [specificCountryChecked, setSpecificCountryChecked] = useState(false);
   const [specificCountryCheckbox, setSpecificCountryCheckbox] = useState("");
   const [hideStoreFrontChecked, setHideStoreFrontChecked] = useState(false);
@@ -63,18 +72,60 @@ const BundleOffer = () => {
   };
   const handleDiscount = (status) => {
     setDiscountStatus(status);
+    setCheckedFreeProduct([])
+    const updatedSelectedProduct = selectedProduct.map((item) => {
+        return {
+          ...item,
+          freeProduct: false,
+          freeProductId: null,
+        }
+    });
+    setSelectedProducts(updatedSelectedProduct);
   };
   const handleDiscountVal = (e) => {
     setDiscountValue(e.target.value);
   };
-  const handleDiscountType = (selected)=>{
-    setSelectedDiscountType(selected)
+  const handleDiscountType = (selected) => {
+    setSelectedDiscountType(selected);
     setDiscountType(selected.value);
-  }
+  };
+  const handleFreeProduct = (index, product_id, e) => {
+    // console.log(index, product_id, "index,product_id");
+    const isChecked = e.target.checked;
+    setCheckedFreeProduct((prevState) => {
+      const newState = [...prevState];
+      newState[index] = isChecked;
+      return newState;
+    });
+
+    const updatedSelectedProduct = selectedProduct.map((item) => {
+      if (item.selectedProduct.id === product_id) {
+        return {
+          ...item,
+          freeProduct: isChecked,
+          freeProductId: isChecked ? product_id : null,
+        };
+      } 
+      // else {
+      //   return {
+      //     ...item,
+      //     freeProduct: false,
+      //     freeProductId: null,
+      //   };
+      // }
+      return item;
+    });
+    setSelectedProducts(updatedSelectedProduct);
+    
+    // console.log(updatedSelectedProduct);
+    // // setItems(data);
+    // // setSelectedProducts(data);
+  };
 
   const handleCustomerOptionCheckbox = (status) => {
     setCustomerChecked(!customerChecked);
     setCustomerOptionCheckbox(status);
+    setCustomerOptionSelected("choose_variant");
   };
   const handleSpecificCountryCheckbox = (status) => {
     setSpecificCountryChecked(!specificCountryChecked);
@@ -200,7 +251,7 @@ const BundleOffer = () => {
                         onChange={(e) => handleDiscountVal(e)}
                       />
                       <Select
-                      className="w-28"
+                        className="w-28"
                         closeMenuOnSelect={true}
                         options={discountParam}
                         components={animatedComponents}
@@ -234,28 +285,43 @@ const BundleOffer = () => {
                 {discountStatus === "free_gift" && (
                   <>
                     <div className="free_gift_box my-2 ml-8">
-                      {selectedProduct.map(
-                        (val, index) =>
-                          // console.log(val.selectedOption,"Val")
-                          val.selectedOption && (
-                            <div
-                              key={index}
-                              className="flex items-center mb-4 ml-5"
-                            >
-                              <input
-                                id={`free-product${index + 1}-checkbox`}
-                                type="checkbox"
-                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
-                              />
-                              <label
-                                htmlFor={`free-product${index + 1}-checkbox`}
-                                className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                              >
-                                Product #{index + 1}
-                              </label>
-                            </div>
-                          )
-                      )}
+                      {selectedProduct.map((val, index) => {
+                        return (
+                          <>
+                            {val.selectedProduct && (
+                              <>
+                                {" "}
+                                <div
+                                  key={index}
+                                  className="flex items-center mb-4 ml-5"
+                                >
+                                  <input
+                                    id={`free-product${index + 1}-checkbox`}
+                                    type="checkbox"
+                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
+                                    checked={checkedFreeProduct[index] || false}
+                                    onChange={(e) =>
+                                      handleFreeProduct(
+                                        index,
+                                        val.selectedProduct.id,
+                                        e
+                                      )
+                                    }
+                                  />
+                                  <label
+                                    htmlFor={`free-product${
+                                      index + 1
+                                    }-checkbox`}
+                                    className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                  >
+                                    Product #{index + 1}
+                                  </label>
+                                </div>
+                              </>
+                            )}
+                          </>
+                        );
+                      })}
                     </div>
                   </>
                 )}
@@ -433,7 +499,7 @@ const BundleOffer = () => {
                       {selectedProduct.map(
                         (val, index) =>
                           // console.log(val.selectedOption,"Val")
-                          val.selectedOption && (
+                          val.selectedProduct && (
                             <div
                               key={index}
                               className="flex items-center mb-4 ml-5"

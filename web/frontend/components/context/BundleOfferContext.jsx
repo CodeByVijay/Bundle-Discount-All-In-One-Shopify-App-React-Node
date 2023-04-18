@@ -4,6 +4,11 @@ export const BundleOfferContext = (props) => {
 const [selectedProduct, setSelectedProducts] = useState([]);
 const [discountValue, setDiscountValue] = useState(10);
 const [discountType, setDiscountType] = useState('percent');
+const [discountStatus, setDiscountStatus] = useState("add_discount");
+const [customerChecked, setCustomerChecked] = useState(false);
+const [customerOptionCheckbox, setCustomerOptionCheckbox] = useState("");
+const [customerOptionSelected, setCustomerOptionSelected] = useState("");
+const [checkedFreeProduct, setCheckedFreeProduct] = useState([]);
 const roundDiscount = [
   {value:".00",label:".00"},
   {value:".49",label:".49"},
@@ -24,7 +29,12 @@ const discountParam = [
           setSelectedProducts,
           roundDiscount,discountParam,
           discountValue, setDiscountValue,
-          discountType, setDiscountType
+          discountType, setDiscountType,
+          discountStatus, setDiscountStatus,
+          customerChecked, setCustomerChecked,
+          customerOptionCheckbox, setCustomerOptionCheckbox,
+          customerOptionSelected, setCustomerOptionSelected,
+          checkedFreeProduct, setCheckedFreeProduct
         }}
       >
         {props.children}

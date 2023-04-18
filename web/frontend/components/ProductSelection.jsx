@@ -26,7 +26,9 @@ const ProductSelection = (props) => {
   };
 
   const handleDivRemove = (id) => {
-    setItems(items.filter((item) => item.id !== id));
+    const removeEle = items.filter((item) => item.id !== id)
+    setItems(removeEle);
+    setSelectedProducts(removeEle);
   };
 
   const Option = (props) => (
