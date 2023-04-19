@@ -1,6 +1,7 @@
 import React,{useContext} from "react";
 import { Link } from "react-router-dom";
 import DataTable from "react-data-table-component";
+import themeColor from "./themeColors";
 
 
 function Dashboard() {
@@ -25,7 +26,7 @@ function Dashboard() {
       name:"Action",
     cell: (row) => (
         <>
-      <span onClick={() => handleButtonClick(row.id)} className='text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2'><i className="fa fa-pencil"></i></span>
+      <span onClick={() => handleButtonClick(row.id)} className={`text-white bg-gradient-to-r from-[${themeColor['sky_400']}] via-[${themeColor['sky_500']}] to-[${themeColor['sky_600']}] hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-[${themeColor['sky_300']}] dark:focus:ring-[${themeColor['sky_800']}] shadow-lg shadow-[${themeColor['sky_500']}]/50 dark:shadow-lg dark:shadow-[${themeColor['sky_800']}]/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2`}><i className="fa fa-pencil"></i></span>
       <span onClick={() => handleButtonClick(row.id)} className='text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2'><i className="fa fa-trash-o"></i></span>
       </>
     ),
@@ -127,7 +128,7 @@ console.log(selectedRows)
             <>
               <div className="makeNewOfferBtn">
                 <Link to="/offers">
-                  <button className="bg-[#10b981] hover:bg-[#047857] text-base text-white py-2 px-5 rounded-full m-2">
+                  <button className={`bg-[${themeColor['sky_500']}] hover:bg-[${themeColor['sky_600']}] text-base text-white py-2 px-5 rounded-full m-2`}>
                     <i className="fa fa-plus-square"></i> Make new offer
                   </button>
                 </Link>

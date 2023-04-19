@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
+import themeColor from "./themeColors";
 
 
 const BundleOffers = () => {
@@ -9,7 +10,7 @@ const BundleOffers = () => {
     <>
       <div className="container shadow mx-auto flex flex-col h-100 justify-center items-center text-center mt-5">
         <div className="bundleGroup p-3">
-          <div className="bundleOffer offer shadow hover:shadow-lg hover:shadow-[#047857] border-solid border-2 border-[#047857]">
+          <div className={`bundleOffer offer shadow hover:shadow-lg hover:shadow-[${themeColor['sky_500']}] border-solid border-2 border-[${themeColor['sky_400']}]`}>
             <Link to="bundle-offer">
               <div className="p-10">
                 <div className="bundleImage">
@@ -113,7 +114,7 @@ const BundleOffers = () => {
             </Link>
           </div>
 
-          <div className="volumeOffer offer shadow hover:shadow-lg hover:shadow-[#047857] border-solid border-2 border-[#047857]">
+          <div className={`volumeOffer offer shadow hover:shadow-lg hover:shadow-[${themeColor['sky_500']}] border-solid border-2 border-[${themeColor['sky_400']}]`}>
             <Link to="volume-offer">
               <div className="p-10">
                 <div className="bundleImage">
@@ -173,7 +174,7 @@ const BundleOffers = () => {
             </Link>
           </div>
 
-          <div className="mixAndMatch offer shadow hover:shadow-lg hover:shadow-[#047857] border-solid border-2 border-[#047857]">
+          <div className={`mixAndMatch offer shadow hover:shadow-lg hover:shadow-[${themeColor['sky_500']}] border-solid border-2 border-[${themeColor['sky_400']}]`}>
             <Link to="mix-and-match-offer">
               <div className="p-10">
                 <div className="bundleImage">
@@ -409,7 +410,7 @@ const BundleOffers = () => {
             </Link>
           </div>
 
-          <div className="cartGoal offer shadow hover:shadow-lg hover:shadow-[#047857] border-solid border-2 border-[#047857]">
+          <div className={`cartGoal offer shadow hover:shadow-lg hover:shadow-[${themeColor['sky_500']}] border-solid border-2 border-[${themeColor['sky_400']}]`}>
             <Link to="cart-goal-offer">
               <div className="p-10">
                 <div className="bundleImage">

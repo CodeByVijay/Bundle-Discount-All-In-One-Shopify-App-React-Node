@@ -2,6 +2,7 @@ import { React, useContext, useState, useEffect } from "react";
 import Select, { components } from "react-select";
 import makeAnimated from "react-select/animated";
 import { BundleOfferStates } from "./context/BundleOfferContext";
+import themeColor from "./themeColors";
 const animatedComponents = makeAnimated();
 
 const ProductSelection = (props) => {
@@ -95,12 +96,12 @@ const ProductSelection = (props) => {
   return (
     <>
       <div
-        className="products p-3 border-solid w-2/3 border-2 mt-2"
+        className={`products p-3 w-full mt-2`}
         id="products"
       >
         <div className="productContainer" id="productContainer">
           {items.map((item, index) => (
-            <div key={item.id} className="product">
+            <div key={item.id} className={`product border-solid border border-2 border-[${themeColor['gray_300']}]`}>
               {index > 1 && (
                 <div class="productDivBtn">
                   <button
@@ -180,7 +181,7 @@ const ProductSelection = (props) => {
 
         <div className="btn">
           <button
-            className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center m-2 mb-2"
+            className={`text-white bg-gradient-to-r from-[${themeColor['sky_400']}] via-[${themeColor['sky_500']}] to-[${themeColor['sky_600']}] hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-[${themeColor['sky_300']}] dark:focus:ring-[${themeColor['sky_800']}] shadow-lg shadow-[${themeColor['sky_500']}]/50 dark:shadow-lg dark:shadow-[${themeColor['sky_800']}]/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center m-2 mb-2`}
             onClick={handleAddNew}
           >
             Add New

@@ -1,4 +1,6 @@
-
+#app{
+  background-color: #ffffff !important;
+}
 .bundleGroup div {
   width: 500px !important;
   max-width: 100%;
@@ -33,16 +35,12 @@
 }
 .previewHead {
   width: 100%;
-  background-color: azure;
-  height: 40px;
-  border: none;
-  border-bottom: 2px solid #10b981;
+  height: 45px;
   padding: 5px;
-
 }
 
 .headSection {
-  border-bottom: 2px solid #10b981;
+  border-bottom: 2px solid #7dd3fc;
 }
 
 .bodySection{
@@ -56,22 +54,26 @@
 .product{
     position: relative;
     border: 0;
-    /* border-bottom: 2px solid #10b981; */
-    border: 2px solid #cfcfcf;
+    border-bottom: 0px solid #d1d5db !important;
+    /* border: 1px solid #cfcfcf; */
     padding: 15px;
+}
+.product:last-child{
+  border-bottom: 1px solid #d1d5db !important;
+
 }
 .product::after{
     content: '+';
     position: absolute;
     right: 50%;
     font-size: 25px;
-    background-color: #fff;
-    border-radius: 45%;
-    border: 1px solid #10b981;
-    color: #10b981;
-    padding: 1px;
-    font-weight: 800;
-    margin: 5px 0 0 0;
+    background-color: #dfe3e8;
+    border-radius: 50%;
+    /* border-bottom: 0px solid #dfe3e8; */
+    color: #a4afba;
+    padding: 4px 7px;
+    font-weight: 500;
+    margin: 2px 0px;
     z-index: 1;
 }
 .product .productDivBtn{

@@ -8,6 +8,7 @@ import { countryList } from "../country.js";
 import Select, { components } from "react-select";
 import makeAnimated from "react-select/animated";
 import { BundleOfferStates } from "../context/BundleOfferContext";
+import themeColor from "../themeColors";
 const animatedComponents = makeAnimated();
 
 const BundleOffer = () => {
@@ -168,8 +169,8 @@ const BundleOffer = () => {
     <>
       <div className="container">
         <div className="flex grid grid-cols-3 mt-5 gap-4 md:grid-cols-3">
-          <div className="col-span-2 border-solid border-2 border-clay-500 ml-2 contentDiv mb-20">
-            <div className="headSection flex w-full h-11 bg-[#f0ffff]">
+          <div className={`col-span-2 border-solid border-2 border-clay-500 ml-2 contentDiv mb-20`}>
+            <div className={`headSection flex w-full h-11 bg-[${themeColor['gray_100']}]`}>
               <button
                 type="button"
                 className="m-2"
@@ -646,7 +647,7 @@ const BundleOffer = () => {
             </div>
           </div>
           <div className="col-span-1 fixed right-5 mb-5 border-solid border-2 border-clay-500 previewDiv">
-            <div className="previewHead">
+            <div className={`previewHead bg-[${themeColor['gray_100']}] border-b-2 border-[${themeColor['sky_300']}]`}>
               <h3 className="text-lg text-center text-bold">Preview</h3>
             </div>
             <div className="previewBody p-2">
